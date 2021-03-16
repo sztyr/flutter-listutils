@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
             return Column(
               children: <Widget>[
                 Text(error.toString()),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () => state.loadMore(),
                   child: Text('Retry'),
                 ),

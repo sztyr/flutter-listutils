@@ -44,7 +44,7 @@ class NetworkListAdapter<T> implements BaseListAdapter<T> {
         : url;
 
     Response response = await _withClient((client) {
-      return client.get(finalUrl, headers: headers);
+      return client.get(Uri.parse(finalUrl), headers: headers);
     });
 
     if (response.statusCode < 300) {
