@@ -1,34 +1,32 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'list_adapter.dart';
 
 class NetworkListAdapter<T> implements BaseListAdapter<T> {
-  final BaseClient client;
+  final BaseClient? client;
   final String url;
-  final String limitParam;
-  final String offsetParam;
+  final String? limitParam;
+  final String? offsetParam;
   final bool disablePagination;
-  final Map<String, String> headers;
+  final Map<String, String>? headers;
 
   const NetworkListAdapter({
-    @required this.url,
+    required this.url,
     this.limitParam,
     this.offsetParam,
     this.disablePagination = false,
     this.client,
     this.headers,
-  })  : assert(url != null),
-        assert(disablePagination == true || limitParam != null),
+  })  : assert(disablePagination == true || limitParam != null),
         assert(disablePagination == true || offsetParam != null);
 
-  Future<T> _withClient<T>(Future<T> Function(BaseClient client) fn) async {
+  Future<T> _withClient<T>(Future<T> Function(BaseClient? client) fn) async {
     if (client != null) {
       return await fn(client);
     } else {
-      final BaseClient client = Client();
+      final BaseClient client = Client() as BaseClient;
       try {
         return await fn(client);
       } finally {
@@ -44,14 +42,14 @@ class NetworkListAdapter<T> implements BaseListAdapter<T> {
         : url;
 
     Response response = await _withClient((client) {
-      return client.get(Uri.parse(finalUrl), headers: headers);
+      return client!.get(Uri.parse(finalUrl), headers: headers);
     });
 
     if (response.statusCode < 300) {
-      Iterable items = json.decode(utf8.decode(response.bodyBytes));
+      Iterable? items = json.decode(utf8.decode(response.bodyBytes));
       return ListItems(
-        items,
-        reachedToEnd: disablePagination == true || items.length == 0,
+        items as Iterable<T>?,
+        reachedToEnd: disablePagination == true || items!.length == 0,
       );
     } else {
       throw ClientException('HTTP ${response.statusCode}: Failed to fetch');
@@ -68,7 +66,7 @@ class NetworkListAdapter<T> implements BaseListAdapter<T> {
       (url != old.url);
 }
 
-String _generateUrl(String url, Map<String, dynamic> params) {
+String _generateUrl(String url, Map<String?, dynamic> params) {
   url += url.contains('?') ? '&' : '?';
   params.forEach((key, value) {
     url += '$key=${Uri.encodeComponent(value.toString())}&';
