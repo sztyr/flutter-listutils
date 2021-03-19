@@ -1,3 +1,6 @@
+## [0.3.0] - 19/03/2021
+* Migrated to Flutter 2 with null safety support
+
 ## [0.2.7] - 10/12/2020
 
 * CustomListView breaks when switching from 0.1.5 to 0.2.6+2 in combination without adapter - [#18](https://github.com/TheMisir/flutter-listutils/issues/18)
